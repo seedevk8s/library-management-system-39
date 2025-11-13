@@ -35,91 +35,132 @@
 
 **필수! 비용 초과 방지를 위해 반드시 설정하세요.**
 
-1. AWS 콘솔 → Billing Dashboard
-2. "Billing preferences" → "Receive Billing Alerts" 체크
-3. CloudWatch (US East N. Virginia 리전) → Alarms → Create alarm
-4. Threshold: $1 설정 → 이메일 알림 설정
-5. Budgets → "Zero spend budget" 생성
+1. **결제 대시보드 접속**
+   - AWS 콘솔 우측 상단 계정 이름 클릭 → **"결제 및 비용 관리"**
+
+2. **결제 알림 활성화**
+   - 좌측 메뉴 **"결제 기본 설정"** → **"결제 알림 수신"** 체크 → **"기본 설정 저장"**
+
+3. **CloudWatch 경보 생성**
+   - 검색창에 **"CloudWatch"** 입력
+   - ⚠️ 리전을 **"미국 동부(버지니아 북부)"** 로 변경
+   - **"경보"** → **"경보 생성"** → **"지표 선택"**
+   - **"결제"** → **"총 예상 요금"** → USD 선택
+   - 임계값: **1** 달러 입력 → **"새 주제 생성"**
+   - 이메일 입력 → **"주제 생성"** → **"경보 생성"**
+   - 📧 이메일 확인 링크 클릭 (필수!)
+
+4. **예산 생성**
+   - 결제 대시보드 → **"예산"** → **"예산 생성"**
+   - **"템플릿 사용(간편)"** → **"제로 지출 예산"** 선택
+   - 예산 이름: **"프리티어-무료-예산"** → 이메일 입력 → **"예산 생성"**
 
 📖 **상세 가이드**: [AWS-DEPLOYMENT-GUIDE.md](./AWS-DEPLOYMENT-GUIDE.md#13-billing-alerts-설정-필수)
 
 ### ✅ 2단계: RDS MySQL 생성 (10분)
 
-1. **RDS 콘솔 접속** (서울 리전: ap-northeast-2)
-2. **"Create database"** 클릭
-3. **템플릿: "Free tier"** 선택
-4. **설정**:
-   - DB 식별자: `library-db`
-   - 마스터 사용자: `admin`
-   - 마스터 암호: `LibraryAdmin2024!` (안전하게 저장!)
-5. **연결**:
-   - 퍼블릭 액세스: Yes
-   - 보안 그룹: `library-rds-sg` (자동 생성)
-6. **추가 구성**:
-   - 초기 데이터베이스 이름: `librarydb`
-   - 자동 백업: 활성화 (7일)
-7. **"Create database"** 클릭
-8. ⏳ 생성 완료 대기 (약 5-10분)
-9. **엔드포인트 복사**: `library-db.xxxxxx.ap-northeast-2.rds.amazonaws.com`
+1. **RDS 콘솔 접속**
+   - 검색창에 **"RDS"** 입력 → 서울 리전(ap-northeast-2) 확인
+
+2. **데이터베이스 생성**
+   - 좌측 메뉴 **"데이터베이스"** → **"데이터베이스 생성"** 클릭
+
+3. **템플릿 선택**
+   - **"표준 생성"** 선택
+   - 엔진: **MySQL** → 버전: MySQL 8.0.35
+   - 템플릿: **"프리 티어"** 선택 ✅
+
+4. **설정**
+   - **DB 인스턴스 식별자**: `library-db`
+   - **마스터 사용자 이름**: `admin`
+   - **마스터 암호**: `LibraryAdmin2024!` (⚠️ 안전하게 저장!)
+
+5. **스토리지**
+   - 할당된 스토리지: **20 GiB**
+   - **스토리지 자동 조정**: 체크 해제 (비용 초과 방지)
+
+6. **연결**
+   - **퍼블릭 액세스**: **"예"** 선택
+   - **VPC 보안 그룹**: **"새로 생성"** → 이름: `library-rds-sg`
+
+7. **추가 구성**
+   - **초기 데이터베이스 이름**: `librarydb` (⚠️ 필수!)
+   - **자동 백업 활성화**: ✅ 체크 (7일)
+   - **삭제 방지**: ✅ 체크
+
+8. **데이터베이스 생성**
+   - **"데이터베이스 생성"** 버튼 클릭
+   - ⏳ 상태가 "사용 가능"이 될 때까지 대기 (약 5-10분)
+
+9. **엔드포인트 확인**
+   - `library-db` 클릭 → **"연결 및 보안"** 탭
+   - **엔드포인트** 복사: `library-db.xxxxxx.ap-northeast-2.rds.amazonaws.com`
+   - ⚠️ 메모장에 저장!
 
 📖 **상세 가이드**: [AWS-DEPLOYMENT-GUIDE.md](./AWS-DEPLOYMENT-GUIDE.md#2단계-rds-mysql-데이터베이스-생성)
 
 ### ✅ 3단계: EC2 인스턴스 생성 (15분)
 
-1. **키 페어 생성**:
-   - EC2 → Key Pairs → "Create key pair"
-   - 이름: `library-app-key`
-   - 형식: `.pem` (Mac/Linux) 또는 `.ppk` (Windows)
-   - 다운로드 후 안전하게 보관
-   - 권한 설정 (Mac/Linux):
+1. **키 페어 생성**
+   - 검색창에 **"EC2"** 입력 → 서울 리전 확인
+   - **"네트워크 및 보안"** → **"키 페어"** → **"키 페어 생성"**
+   - 이름: `library-app-key` / 유형: RSA / 형식: `.pem` (Mac/Linux) 또는 `.ppk` (Windows)
+   - 다운로드 후 권한 설정 (Mac/Linux):
      ```bash
      mv ~/Downloads/library-app-key.pem ~/.ssh/
      chmod 400 ~/.ssh/library-app-key.pem
      ```
 
-2. **EC2 인스턴스 시작**:
-   - EC2 → Launch instances
-   - 이름: `library-app-server`
-   - AMI: **Ubuntu Server 22.04 LTS** (Free tier)
-   - 인스턴스 유형: **t2.micro**
-   - 키 페어: `library-app-key`
-   - 보안 그룹 생성:
-     ```
-     SSH (22): My IP
-     HTTP (80): 0.0.0.0/0
-     HTTPS (443): 0.0.0.0/0
-     Custom TCP (8081): 0.0.0.0/0
-     ```
-   - 스토리지: 30 GiB gp3
-   - User data (고급 세부 정보):
-     ```bash
-     #!/bin/bash
-     apt-get update -y && apt-get upgrade -y
+2. **EC2 인스턴스 시작**
+   - **"인스턴스"** → **"인스턴스 시작"** 클릭
+   - **이름**: `library-app-server`
+   - **AMI**: **Ubuntu Server 22.04 LTS** (프리 티어 ✅)
+   - **인스턴스 유형**: **t2.micro** (프리 티어 ✅)
+   - **키 페어**: `library-app-key` 선택
 
-     # Docker 설치
-     curl -fsSL https://get.docker.com -o get-docker.sh
-     sh get-docker.sh
-     usermod -aG docker ubuntu
-
-     # 디렉토리 생성
-     mkdir -p /home/ubuntu/app/{uploads,logs,backups}
-     chown -R ubuntu:ubuntu /home/ubuntu/app
+   **네트워크 설정** (편집 클릭):
+   - **퍼블릭 IP 자동 할당**: 활성화
+   - **보안 그룹 생성**: 이름 `library-app-sg`
+   - **인바운드 보안 그룹 규칙**:
+     ```
+     SSH (22): 내 IP
+     HTTP (80): 위치 무관 (0.0.0.0/0)
+     HTTPS (443): 위치 무관 (0.0.0.0/0)
+     사용자 지정 TCP (8081): 위치 무관 (0.0.0.0/0)
      ```
 
-3. **Elastic IP 할당**:
-   - EC2 → Elastic IPs → "Allocate Elastic IP address"
-   - 생성된 IP를 `library-app-server`에 연결
-   - **이 IP를 메모하세요!** (예: 3.35.123.456)
+   **스토리지**: 30 GiB gp3
 
-4. **SSH 접속 테스트**:
+   **고급 세부 정보 → 사용자 데이터**:
+   ```bash
+   #!/bin/bash
+   apt-get update -y && apt-get upgrade -y
+   curl -fsSL https://get.docker.com -o get-docker.sh
+   sh get-docker.sh
+   usermod -aG docker ubuntu
+   mkdir -p /home/ubuntu/app/{uploads,logs,backups}
+   chown -R ubuntu:ubuntu /home/ubuntu/app
+   ```
+
+   - **"인스턴스 시작"** 클릭
+   - 상태가 **"실행 중"**, 검사 **"2/2 통과"** 확인 (약 2-3분)
+
+3. **Elastic IP 할당 및 연결**
+   - **"네트워크 및 보안"** → **"탄력적 IP"** → **"탄력적 IP 주소 할당"**
+   - **"할당"** 클릭 → IP 체크 → **"작업"** → **"탄력적 IP 주소 연결"**
+   - 인스턴스: `library-app-server` 선택 → **"연결"** 클릭
+   - ⚠️ **이 IP 주소를 메모하세요!** (예: 3.35.123.456)
+
+4. **SSH 접속 테스트**
    ```bash
    ssh -i ~/.ssh/library-app-key.pem ubuntu@<YOUR-ELASTIC-IP>
    ```
 
-5. **RDS 보안 그룹 업데이트**:
-   - EC2 → Security Groups → `library-rds-sg` 선택
-   - Inbound rules 편집
-   - MySQL/Aurora (3306) → Source: EC2 보안 그룹 ID (sg-xxx)
+5. **RDS 보안 그룹 업데이트**
+   - **"보안 그룹"** → `library-rds-sg` 선택
+   - **"인바운드 규칙 편집"** 클릭
+   - MySQL/Aurora (3306) → 소스: EC2 보안 그룹 ID (sg-xxx) 입력
+   - **"규칙 저장"** 클릭
 
 📖 **상세 가이드**: [AWS-DEPLOYMENT-GUIDE.md](./AWS-DEPLOYMENT-GUIDE.md#3단계-ec2-인스턴스-생성-및-설정)
 
