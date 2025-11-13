@@ -228,92 +228,129 @@ cd library-management-system-39
 ### 2.1 RDS 인스턴스 생성
 
 1. **RDS 대시보드 접속**
-   - AWS 콘솔 → "RDS" 검색
-   - 리전이 **"서울 (ap-northeast-2)"** 인지 확인
+   - AWS 콘솔 검색창에 **"RDS"** 입력 후 선택
+   - 우측 상단 리전이 **"서울 (ap-northeast-2)"** 인지 확인
 
 2. **데이터베이스 생성 시작**
-   - "Create database" 클릭
+   - 좌측 메뉴 **"데이터베이스"** (Databases) 클릭
+   - 오렌지색 **"데이터베이스 생성"** (Create database) 버튼 클릭
 
-3. **엔진 옵션 선택**
-   - "Standard create" 선택
-   - 엔진 유형: **MySQL**
-   - 버전: **MySQL 8.0.35** (최신 8.0.x)
+3. **데이터베이스 생성 방식**
+   - **"표준 생성"** (Standard create) 선택
 
-4. **템플릿 선택**
-   - ✅ **"Free tier"** 선택 (자동으로 프리티어 옵션 적용)
+4. **엔진 옵션**
+   - 엔진 유형: **MySQL** 선택
+   - 에디션: **MySQL Community**
+   - 엔진 버전: **MySQL 8.0.35** (또는 최신 8.0.x 버전)
 
-5. **설정**
-   - DB 인스턴스 식별자: `library-db`
-   - 마스터 사용자 이름: `admin` (root 대신 사용)
-   - 마스터 암호: 강력한 비밀번호 입력 (예: `LibraryAdmin2024!`)
-   - 암호 확인: 동일하게 입력
-   - ⚠️ **암호를 안전하게 저장하세요!**
+5. **템플릿**
+   - ✅ **"프리 티어"** (Free tier) 선택
+   - 자동으로 프리티어 최적 옵션 적용됨
 
-6. **인스턴스 구성**
-   - DB 인스턴스 클래스: **db.t2.micro** (자동 선택됨)
-   - 스토리지: **20GB** (프리티어 최대)
-   - 스토리지 자동 조정: ✅ **비활성화** (비용 초과 방지)
+6. **설정**
+   - **DB 인스턴스 식별자**: `library-db` 입력
+   - 자격 증명 설정:
+     - **마스터 사용자 이름**: `admin` 입력 (기본값 유지)
+     - **마스터 암호**: 강력한 비밀번호 입력 (예: `LibraryAdmin2024!`)
+     - **암호 확인**: 동일하게 입력
+   - ⚠️ **마스터 암호를 안전하게 메모장에 저장하세요!**
 
-7. **연결**
-   - 컴퓨팅 리소스: "Don't connect to an EC2 compute resource" (수동으로 설정)
-   - 네트워크 유형: IPv4
-   - VPC: 기본 VPC 선택
-   - 서브넷 그룹: 기본값
-   - 퍼블릭 액세스: **"Yes"** (EC2에서 접근 가능하도록 설정)
-   - VPC 보안 그룹: "Create new" 선택
-   - 새 보안 그룹 이름: `library-rds-sg`
-   - 가용 영역: ap-northeast-2a
+7. **인스턴스 구성**
+   - **DB 인스턴스 클래스**: **db.t2.micro** (프리 티어 선택 시 자동 설정됨)
+   - 버스터블 클래스 (t 클래스 포함)
 
-8. **데이터베이스 인증**
-   - "Password authentication" 선택
+8. **스토리지**
+   - 스토리지 유형: **범용 SSD (gp2)**
+   - 할당된 스토리지: **20 GiB** (프리티어 최대)
+   - **스토리지 자동 조정 활성화**: ✅ **체크 해제** (비용 초과 방지)
 
-9. **추가 구성**
-   - 초기 데이터베이스 이름: `librarydb`
-   - DB 파라미터 그룹: default.mysql8.0
-   - 백업:
-     - 자동 백업: ✅ **활성화** (프리티어 20GB 포함)
-     - 백업 보존 기간: **7일**
-     - 백업 기간: 적절한 시간 선택 (예: 03:00-04:00 UTC)
-   - 암호화: ✅ 비활성화 (프리티어에서는 선택사항)
-   - 로그 내보내기: 모두 체크 해제 (CloudWatch Logs 비용 방지)
-   - 유지 관리:
-     - 자동 마이너 버전 업그레이드: ✅ 활성화
-   - 삭제 방지: ✅ **활성화** (실수로 삭제 방지)
+9. **연결**
+   - 컴퓨팅 리소스: **"EC2 컴퓨팅 리소스에 연결 안 함"** (Don't connect to an EC2 compute resource) 선택
+   - 네트워크 유형: **IPv4**
+   - **Virtual Private Cloud (VPC)**: 기본 VPC 선택
+   - **DB 서브넷 그룹**: default
+   - **퍼블릭 액세스**: **"예"** (Yes) 선택 ⚠️ EC2에서 접근하려면 필요
+   - **VPC 보안 그룹**:
+     - **"새로 생성"** (Create new) 선택
+     - 새 VPC 보안 그룹 이름: `library-rds-sg` 입력
+   - **가용 영역**: **ap-northeast-2a** 선택
 
-10. **월별 추정 요금 확인**
-    - 우측 하단 "Estimated monthly costs"
-    - 프리티어 범위 내: **$0.00**
+10. **데이터베이스 인증**
+    - **"암호 인증"** (Password authentication) 선택
 
-11. **데이터베이스 생성**
-    - "Create database" 클릭
-    - ⏳ 생성 완료까지 약 5-10분 소요
+11. **추가 구성** 확장
+    - 클릭하여 펼치기
+
+    **데이터베이스 옵션**:
+    - **초기 데이터베이스 이름**: `librarydb` 입력 (⚠️ 필수!)
+    - **DB 파라미터 그룹**: default.mysql8.0 (기본값)
+    - **옵션 그룹**: default:mysql-8-0 (기본값)
+
+    **백업**:
+    - **자동 백업 활성화**: ✅ 체크 (프리티어 20GB 포함)
+    - **백업 보존 기간**: **7일** 선택
+    - **백업 기간**: 적절한 시간 선택 (예: **03:00-04:00 UTC** 또는 **18:00-19:00 UTC**)
+    - 백업할 스냅샷 복사 대상 리전: 없음
+
+    **암호화**:
+    - **암호화 활성화**: 체크 해제 (프리티어에서는 선택사항)
+
+    **로그 내보내기**:
+    - 모든 로그 체크 해제 (CloudWatch Logs 비용 발생 방지)
+      - 감사 로그
+      - 오류 로그
+      - 일반 로그
+      - 느린 쿼리 로그
+
+    **유지 관리**:
+    - **마이너 버전 자동 업그레이드 활성화**: ✅ 체크
+    - 유지 관리 기간: 기본값
+
+    **삭제 방지**:
+    - **삭제 방지 활성화**: ✅ 체크 (실수로 삭제 방지)
+
+12. **월별 추정 요금 확인**
+    - 우측 하단 **"월별 추정 요금"** (Estimated monthly costs) 확인
+    - 프리티어 범위 내: **USD 0.00**
+
+13. **데이터베이스 생성**
+    - 하단 오렌지색 **"데이터베이스 생성"** (Create database) 버튼 클릭
+    - ⏳ 데이터베이스 생성 중... (약 5-10분 소요)
+    - 상태가 **"생성 중"** (Creating) → **"백업 중"** (Backing-up) → **"사용 가능"** (Available)으로 변경됨
 
 ### 2.2 RDS 보안 그룹 설정
 
 1. **RDS 인스턴스 상태 확인**
-   - RDS 대시보드에서 `library-db` 상태가 "Available" 될 때까지 대기
+   - RDS 대시보드 → **"데이터베이스"** 메뉴
+   - `library-db` 인스턴스의 상태가 **"사용 가능"** (Available)이 될 때까지 대기
+   - 약 5-10분 소요
 
 2. **엔드포인트 확인**
-   - RDS 인스턴스 `library-db` 클릭
-   - "Connectivity & security" 탭
-   - **엔드포인트 복사** (예: `library-db.xxxxxx.ap-northeast-2.rds.amazonaws.com`)
-   - 포트: 3306
-   - ⚠️ **엔드포인트를 메모장에 저장하세요!**
+   - `library-db` 인스턴스 이름 클릭 (파란색 링크)
+   - **"연결 및 보안"** (Connectivity & security) 탭 클릭
+   - **엔드포인트 및 포트** 섹션에서:
+     - **엔드포인트**: 복사 (예: `library-db.xxxxxx.ap-northeast-2.rds.amazonaws.com`)
+     - **포트**: 3306 확인
+   - ⚠️ **엔드포인트를 메모장에 안전하게 저장하세요!**
 
 3. **보안 그룹 설정**
-   - RDS 인스턴스 상세 페이지 → "VPC security groups" 클릭
-   - "Inbound rules" 탭 → "Edit inbound rules"
-   - 기본 규칙 삭제 또는 수정:
-     ```
-     Type: MySQL/Aurora
-     Protocol: TCP
-     Port: 3306
-     Source: Custom (나중에 EC2 보안 그룹 ID로 변경)
-     Description: Allow from EC2
-     ```
-   - "Save rules"
+   - 같은 페이지 **"연결 및 보안"** 탭에서
+   - **VPC 보안 그룹** 섹션의 `library-rds-sg` 링크 클릭 (새 탭 열림)
+   - EC2 보안 그룹 페이지가 열림
+   - **"인바운드 규칙"** (Inbound rules) 탭 클릭
+   - **"인바운드 규칙 편집"** (Edit inbound rules) 버튼 클릭
 
-> 📝 **참고**: EC2 생성 후 보안 그룹 ID를 여기에 추가하여 EC2에서만 접근 가능하도록 설정합니다.
+   기본 규칙 확인 (EC2 생성 후 수정 예정):
+   ```
+   유형(Type): MySQL/Aurora
+   프로토콜(Protocol): TCP
+   포트 범위(Port range): 3306
+   소스(Source): Custom (나중에 EC2 보안 그룹 ID로 변경)
+   설명(Description): Allow from EC2
+   ```
+   - **"규칙 저장"** (Save rules) 클릭
+
+> 📝 **참고**: EC2 인스턴스 생성 후, 이 보안 그룹의 소스를 EC2 보안 그룹 ID로 변경하여 EC2에서만 RDS에 접근 가능하도록 설정합니다.
 
 ### 2.3 RDS 연결 테스트 (선택사항)
 
@@ -344,21 +381,23 @@ mysql> exit;
 ### 3.1 EC2 키 페어 생성
 
 1. **EC2 대시보드 접속**
-   - AWS 콘솔 → "EC2" 검색
-   - 리전: **"서울 (ap-northeast-2)"** 확인
+   - AWS 콘솔 검색창에 **"EC2"** 입력 후 선택
+   - 우측 상단 리전이 **"서울 (ap-northeast-2)"** 인지 확인
 
 2. **키 페어 생성**
-   - 좌측 메뉴 "Network & Security" → "Key Pairs"
-   - "Create key pair" 클릭
-   - 이름: `library-app-key`
-   - 키 페어 유형: **RSA**
-   - 파일 형식:
-     - Mac/Linux: **".pem"**
-     - Windows (PuTTY): **".ppk"**
-   - "Create key pair" 클릭
-   - 🔑 **자동으로 다운로드된 키 파일을 안전하게 보관!**
+   - 좌측 메뉴에서 **"네트워크 및 보안"** (Network & Security) → **"키 페어"** (Key Pairs) 클릭
+   - 우측 상단 오렌지색 **"키 페어 생성"** (Create key pair) 버튼 클릭
 
-3. **키 파일 권한 설정 (Mac/Linux)**
+   **키 페어 설정**:
+   - **이름**: `library-app-key` 입력
+   - **키 페어 유형**: **RSA** 선택
+   - **프라이빗 키 파일 형식**:
+     - Mac/Linux 사용자: **".pem"** 선택
+     - Windows (PuTTY) 사용자: **".ppk"** 선택
+   - **"키 페어 생성"** (Create key pair) 버튼 클릭
+   - 🔑 **키 파일이 자동으로 다운로드됩니다. 안전하게 보관하세요!**
+
+3. **키 파일 권한 설정 (Mac/Linux 사용자만)**
    ```bash
    # 다운로드 폴더로 이동
    cd ~/Downloads
@@ -367,59 +406,76 @@ mysql> exit;
    mkdir -p ~/.ssh
    mv library-app-key.pem ~/.ssh/
 
-   # 권한 변경 (필수)
+   # 권한 변경 (필수 - SSH 접속을 위해 반드시 필요)
    chmod 400 ~/.ssh/library-app-key.pem
+
+   # 권한 확인
+   ls -l ~/.ssh/library-app-key.pem
+   # -r-------- 으로 표시되어야 함
    ```
 
 ### 3.2 EC2 인스턴스 생성
 
 1. **인스턴스 시작**
-   - EC2 대시보드 → "Instances" → "Launch instances"
+   - EC2 대시보드 좌측 메뉴 → **"인스턴스"** (Instances) 클릭
+   - 우측 상단 오렌지색 **"인스턴스 시작"** (Launch instances) 버튼 클릭
 
 2. **이름 및 태그**
-   - Name: `library-app-server`
-   - 태그 추가 (선택사항):
-     - Key: `Environment`, Value: `production`
-     - Key: `Project`, Value: `library-management`
+   - **이름**: `library-app-server` 입력
+   - **태그 추가** (선택사항) - "새 태그 추가" 클릭:
+     - 키: `Environment`, 값: `production`
+     - 키: `Project`, 값: `library-management`
 
 3. **애플리케이션 및 OS 이미지 (AMI)**
-   - Quick Start → **Ubuntu**
-   - AMI: **Ubuntu Server 22.04 LTS (HVM), SSD Volume Type**
-   - 아키텍처: **64비트 (x86)**
-   - ✅ "Free tier eligible" 표시 확인
+   - **빠른 시작** (Quick Start) 탭 선택 (기본값)
+   - **Ubuntu** 선택
+   - AMI: **Ubuntu Server 22.04 LTS (HVM), SSD Volume Type** 선택
+   - 아키텍처: **64비트 (x86)** 확인
+   - ✅ **"프리 티어 사용 가능"** (Free tier eligible) 표시 확인
 
 4. **인스턴스 유형**
-   - 인스턴스 유형: **t2.micro**
-   - ✅ "Free tier eligible" 표시 확인
-   - vCPU: 1, 메모리: 1 GiB
+   - 인스턴스 유형: **t2.micro** 선택
+   - ✅ **"프리 티어 사용 가능"** 표시 확인
+   - 사양: vCPU 1개, 메모리 1 GiB
 
-5. **키 페어**
-   - 키 페어 선택: **library-app-key**
+5. **키 페어 (로그인)**
+   - **키 페어 이름**: 드롭다운에서 **library-app-key** 선택
+   - 이전 단계에서 생성한 키 페어 사용
 
 6. **네트워크 설정**
-   - VPC: 기본 VPC
-   - 서브넷: 기본값 (ap-northeast-2a)
-   - 퍼블릭 IP 자동 할당: **"Enable"**
-   - 방화벽 (보안 그룹): "Create security group" 선택
-   - 보안 그룹 이름: `library-app-sg`
-   - 설명: `Security group for library application`
+   - 우측 **"편집"** (Edit) 버튼 클릭하여 상세 설정
 
-   **인바운드 규칙 설정**:
+   **네트워크 설정 상세**:
+   - **VPC**: 기본 VPC 선택 (vpc-xxxxx)
+   - **서브넷**: 기본값 유지 또는 ap-northeast-2a 선택
+   - **퍼블릭 IP 자동 할당**: **"활성화"** (Enable) 선택
 
-   | Type | Protocol | Port | Source | Description |
-   |------|----------|------|--------|-------------|
-   | SSH | TCP | 22 | My IP | SSH access from my IP |
-   | HTTP | TCP | 80 | 0.0.0.0/0 | HTTP access |
-   | HTTPS | TCP | 443 | 0.0.0.0/0 | HTTPS access |
-   | Custom TCP | TCP | 8081 | 0.0.0.0/0 | Spring Boot app |
+   **방화벽 (보안 그룹)**:
+   - **"보안 그룹 생성"** (Create security group) 선택
+   - **보안 그룹 이름**: `library-app-sg` 입력
+   - **설명**: `Security group for library application` 입력
 
-   > ⚠️ **보안 강화**: SSH는 "My IP"로 제한하여 본인 IP에서만 접속 가능하도록 설정
+   **인바운드 보안 그룹 규칙** 설정:
+
+   | 유형(Type) | 프로토콜 | 포트 범위 | 소스 유형 | 소스 | 설명 |
+   |-----------|---------|----------|----------|------|------|
+   | SSH | TCP | 22 | 내 IP | (자동) | SSH access from my IP |
+   | HTTP | TCP | 80 | 위치 무관 | 0.0.0.0/0 | HTTP access |
+   | HTTPS | TCP | 443 | 위치 무관 | 0.0.0.0/0 | HTTPS access |
+   | 사용자 지정 TCP | TCP | 8081 | 위치 무관 | 0.0.0.0/0 | Spring Boot app |
+
+   규칙 추가 방법:
+   - **"보안 그룹 규칙 추가"** 버튼 클릭
+   - 각 규칙에 대해 위 표의 값 입력
+
+   > ⚠️ **보안 강화**: SSH는 **"내 IP"** (My IP)로 자동 설정되어 본인 IP에서만 접속 가능
 
 7. **스토리지 구성**
-   - 루트 볼륨: **30 GiB** (프리티어 최대)
-   - 볼륨 유형: **gp3** (범용 SSD)
-   - 암호화: 비활성화 (선택사항)
-   - 종료 시 삭제: ✅ 활성화
+   - **루트 볼륨 (Root volume)**:
+     - 크기: **30 GiB** 입력 (프리티어 최대)
+     - 볼륨 유형: **gp3** (범용 SSD) 선택
+     - 암호화: 체크 해제 (선택사항)
+     - **종료 시 삭제**: ✅ 체크 (기본값)
 
 8. **고급 세부 정보** (선택사항)
    - 모니터링: 기본 (상세 모니터링은 비용 발생)
@@ -459,37 +515,93 @@ mysql> exit;
    echo "EC2 initialization completed" > /home/ubuntu/init-complete.txt
    ```
 
-9. **요약 및 시작**
-   - 우측 "Summary" 패널에서 설정 확인
-   - 프리티어 사용량: 750시간/월
-   - "Launch instance" 클릭
+8. **고급 세부 정보** (선택사항)
+   - **고급 세부 정보** 섹션 클릭하여 확장
+   - **상세 모니터링**: 비활성화 유지 (활성화 시 비용 발생)
+   - **사용자 데이터** (User data): 아래 스크립트 복사하여 붙여넣기
+
+   > 📝 User data는 EC2 인스턴스가 처음 시작될 때 자동으로 실행되는 스크립트입니다.
+
+   ```bash
+   #!/bin/bash
+   # 시스템 업데이트
+   apt-get update -y
+   apt-get upgrade -y
+
+   # Docker 설치
+   apt-get install -y ca-certificates curl gnupg lsb-release
+   mkdir -p /etc/apt/keyrings
+   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+   echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+   apt-get update -y
+   apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+   # Docker 서비스 시작
+   systemctl start docker
+   systemctl enable docker
+
+   # ubuntu 사용자를 docker 그룹에 추가
+   usermod -aG docker ubuntu
+
+   # 애플리케이션 디렉토리 생성
+   mkdir -p /home/ubuntu/app
+   mkdir -p /home/ubuntu/app/uploads
+   mkdir -p /home/ubuntu/app/logs
+   chown -R ubuntu:ubuntu /home/ubuntu/app
+
+   # Git 설치
+   apt-get install -y git
+
+   # 완료 메시지
+   echo "EC2 initialization completed" > /home/ubuntu/init-complete.txt
+   ```
+
+9. **요약 확인 및 인스턴스 시작**
+   - 우측 **"요약"** (Summary) 패널에서 설정 확인
+     - 인스턴스 개수: 1
+     - 인스턴스 유형: t2.micro
+     - 프리티어 사용량: 750시간/월
+   - 하단 오렌지색 **"인스턴스 시작"** (Launch instance) 버튼 클릭
 
 10. **인스턴스 시작 확인**
-    - "View all instances" 클릭
-    - 인스턴스 상태가 "Running" 될 때까지 대기 (약 1-2분)
-    - 2/2 checks passed 확인
+    - 성공 메시지가 표시되면 **"모든 인스턴스 보기"** (View all instances) 클릭
+    - 인스턴스 목록에서 `library-app-server` 확인
+    - **인스턴스 상태**가 **"실행 중"** (Running)이 될 때까지 대기 (약 1-2분)
+    - **상태 검사**가 **"2/2 검사 통과"** (2/2 checks passed)가 될 때까지 대기 (약 2-3분)
 
 ### 3.3 Elastic IP 할당
 
-1. **Elastic IP 생성**
-   - EC2 대시보드 → "Network & Security" → "Elastic IPs"
-   - "Allocate Elastic IP address" 클릭
-   - 네트워크 경계 그룹: ap-northeast-2
-   - "Allocate" 클릭
+> 💡 **Elastic IP란?** 고정된 공인 IP 주소로, EC2 인스턴스를 재시작해도 IP가 변경되지 않습니다.
 
-2. **Elastic IP 연결**
-   - 생성된 Elastic IP 선택
-   - "Actions" → "Associate Elastic IP address"
-   - 인스턴스: `library-app-server` 선택
-   - 프라이빗 IP 주소: 자동 선택됨
-   - "Associate" 클릭
+1. **Elastic IP 주소 할당**
+   - EC2 대시보드 좌측 메뉴 → **"네트워크 및 보안"** → **"탄력적 IP"** (Elastic IPs) 클릭
+   - 우측 상단 오렌지색 **"탄력적 IP 주소 할당"** (Allocate Elastic IP address) 버튼 클릭
+   - **네트워크 경계 그룹**: ap-northeast-2 (기본값)
+   - 하단 오렌지색 **"할당"** (Allocate) 버튼 클릭
+   - ✅ Elastic IP 주소가 생성됨 (예: 3.35.123.456)
+
+2. **Elastic IP를 EC2 인스턴스에 연결**
+   - 방금 생성된 Elastic IP 주소 체크박스 선택
+   - 상단 **"작업"** (Actions) → **"탄력적 IP 주소 연결"** (Associate Elastic IP address) 클릭
+
+   **연결 설정**:
+   - **리소스 유형**: **인스턴스** 선택
+   - **인스턴스**: `library-app-server` 선택 (드롭다운에서 검색)
+   - **프라이빗 IP 주소**: 자동 선택됨 (기본값 유지)
+   - 하단 오렌지색 **"연결"** (Associate) 버튼 클릭
 
 3. **Elastic IP 확인**
-   - EC2 인스턴스 목록에서 `library-app-server` 선택
-   - "Public IPv4 address"가 Elastic IP로 변경됨
-   - ⚠️ **이 IP 주소를 메모하세요! (예: 3.35.123.456)**
+   - EC2 대시보드 → **"인스턴스"** 메뉴
+   - `library-app-server` 인스턴스 선택
+   - 하단 세부 정보에서:
+     - **퍼블릭 IPv4 주소**가 Elastic IP로 변경되었는지 확인
+     - **탄력적 IP 주소**에도 같은 IP가 표시됨
+   - ⚠️ **이 IP 주소를 메모장에 안전하게 저장하세요!** (예: 3.35.123.456)
 
-> 💡 **중요**: Elastic IP는 EC2 인스턴스에 연결되어 있을 때만 무료입니다. 인스턴스를 중지하면 요금이 부과되므로 주의하세요!
+> 💡 **중요**: Elastic IP는 EC2 인스턴스에 **연결되어 실행 중일 때만 무료**입니다.
+> - ✅ 인스턴스 실행 중 + Elastic IP 연결: **무료**
+> - ❌ 인스턴스 중지 상태 + Elastic IP 할당만 됨: **시간당 요금 발생**
+> - 💡 사용하지 않는 Elastic IP는 반드시 릴리스(해제)하세요!
 
 ### 3.4 EC2 접속 테스트
 
