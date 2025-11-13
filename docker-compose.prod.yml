@@ -1,0 +1,64 @@
+# Production Docker Compose Configuration
+# EC2에서 사용할 설정 파일
+
+version: "3.8"
+
+services:
+  app:
+    # Docker Hub에서 이미지를 가져옴
+    # 실제 배포 시 <your-username>를 본인의 Docker Hub username으로 변경
+    image: ${DOCKERHUB_USERNAME:-your-username}/library-management-system:latest
+
+    container_name: library-app
+
+    # 환경 변수 파일 로드
+    env_file:
+      - .env
+
+    # 환경 변수 설정 (우선순위: 여기 설정 > .env 파일)
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - FILE_UPLOAD_DIR=/app/uploads
+      - SERVER_PORT=${SERVER_PORT:-8081}
+
+    # 포트 매핑
+    ports:
+      - "${SERVER_PORT:-8081}:8081"
+
+    # 볼륨 마운트
+    volumes:
+      - ./uploads:/app/uploads    # 파일 업로드 디렉토리
+      - ./logs:/app/logs          # 애플리케이션 로그
+
+    # 재시작 정책
+    restart: unless-stopped
+
+    # Health Check
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+    # 리소스 제한 (t2.micro 최적화)
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 900M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+    # 로깅 설정
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# 네트워크는 기본 bridge 사용 (명시적으로 정의하지 않음)

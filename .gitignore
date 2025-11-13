@@ -45,3 +45,13 @@ out/
 ### Uploads ###
 uploads/*
 !uploads/.gitkeep
+
+### Environment Variables ###
+.env
+.env.local
+.env.*.local
+
+### Backups ###
+backups/
+*.sql
+*.dump

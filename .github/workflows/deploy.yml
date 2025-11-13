@@ -1,0 +1,179 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+env:
+  DOCKER_IMAGE_NAME: library-management-system
+  DOCKER_IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run tests
+        run: ./gradlew test --no-daemon
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_IMAGE_TAG }}
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:buildcache,mode=max
+
+  deploy:
+    name: Deploy to EC2
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (Optional)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ap-northeast-2
+        continue-on-error: true
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            # 배포 시작
+            echo "=========================================="
+            echo "Starting deployment..."
+            echo "=========================================="
+
+            # 애플리케이션 디렉토리로 이동
+            cd /home/ubuntu/app
+
+            # 환경 변수 업데이트
+            cat > .env << EOF
+            SPRING_PROFILES_ACTIVE=prod
+            DB_URL=${{ secrets.DB_URL }}
+            DB_USERNAME=${{ secrets.DB_USERNAME }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            FILE_UPLOAD_DIR=/app/uploads
+            SERVER_PORT=8081
+            EOF
+
+            # Docker Compose 파일 생성/업데이트
+            cat > docker-compose.prod.yml << 'EOF'
+            version: "3.8"
+
+            services:
+              app:
+                image: ${{ secrets.DOCKERHUB_USERNAME }}/library-management-system:latest
+                container_name: library-app
+                env_file:
+                  - .env
+                environment:
+                  - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+                  - DB_URL=${DB_URL}
+                  - DB_USERNAME=${DB_USERNAME}
+                  - DB_PASSWORD=${DB_PASSWORD}
+                  - FILE_UPLOAD_DIR=/app/uploads
+                ports:
+                  - "8081:8081"
+                volumes:
+                  - ./uploads:/app/uploads
+                  - ./logs:/app/logs
+                restart: unless-stopped
+                healthcheck:
+                  test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8081/actuator/health"]
+                  interval: 30s
+                  timeout: 10s
+                  retries: 3
+                  start_period: 60s
+            EOF
+
+            # 최신 이미지 다운로드
+            echo "[1/4] Pulling latest Docker image..."
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/library-management-system:latest
+
+            # 기존 컨테이너 중지 및 제거
+            echo "[2/4] Stopping current application..."
+            docker compose -f docker-compose.prod.yml down || true
+
+            # 오래된 이미지 정리
+            echo "[3/4] Cleaning up old images..."
+            docker image prune -f
+
+            # 새 컨테이너 시작
+            echo "[4/4] Starting new application..."
+            docker compose -f docker-compose.prod.yml up -d
+
+            # 컨테이너 시작 대기
+            echo "Waiting for application to start..."
+            sleep 30
+
+            # Health check
+            for i in {1..10}; do
+              if curl -f http://localhost:8081/actuator/health > /dev/null 2>&1; then
+                echo "✅ Application is healthy!"
+                docker compose -f docker-compose.prod.yml ps
+                echo ""
+                echo "=========================================="
+                echo "Deployment completed successfully!"
+                echo "Application URL: http://${{ secrets.EC2_HOST }}:8081"
+                echo "=========================================="
+                exit 0
+              fi
+              echo "Waiting for application to be healthy... ($i/10)"
+              sleep 10
+            done
+
+            # Health check 실패
+            echo "❌ Application health check failed!"
+            echo "Checking logs..."
+            docker compose -f docker-compose.prod.yml logs --tail=50
+            exit 1
+
+      - name: Notify deployment status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ Deployment successful!"
+            echo "Application URL: http://${{ secrets.EC2_HOST }}:8081"
+          else
+            echo "❌ Deployment failed!"
+            echo "Please check the logs above for details."
+          fi
