@@ -24,12 +24,15 @@
 
 ## 🎯 단계별 체크리스트
 
-### ✅ 사전 준비 (5분)
+### ✅ 사전 준비 (5분) - Windows
 
 - [ ] AWS 계정 생성 완료
 - [ ] GitHub 계정 로그인
 - [ ] Docker Hub 계정 생성 (https://hub.docker.com/)
-- [ ] 로컬에 Git, SSH 클라이언트 설치 확인
+- [ ] Windows 로컬 환경 준비:
+  - [ ] Git for Windows 설치 (https://git-scm.com/download/win)
+  - [ ] SSH 클라이언트: PuTTY (https://www.putty.org/) 또는 OpenSSH
+  - [ ] VS Code 설치 (https://code.visualstudio.com/)
 
 ### ✅ 1단계: AWS Billing Alerts 설정 (10분)
 
@@ -101,14 +104,16 @@
 
 ### ✅ 3단계: EC2 인스턴스 생성 (15분)
 
-1. **키 페어 생성**
+1. **키 페어 생성** (Windows)
    - 검색창에 **"EC2"** 입력 → 서울 리전 확인
    - **"네트워크 및 보안"** → **"키 페어"** → **"키 페어 생성"**
-   - 이름: `library-app-key` / 유형: RSA / 형식: `.pem` (Mac/Linux) 또는 `.ppk` (Windows)
-   - 다운로드 후 권한 설정 (Mac/Linux):
-     ```bash
-     mv ~/Downloads/library-app-key.pem ~/.ssh/
-     chmod 400 ~/.ssh/library-app-key.pem
+   - 이름: `library-app-key` / 유형: RSA
+   - 형식: **`.ppk`** (PuTTY 권장) 또는 `.pem` (Git Bash/PowerShell)
+   - 다운로드 후 저장 (PowerShell):
+     ```powershell
+     # SSH 폴더 생성 및 키 파일 이동
+     New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.ssh"
+     Move-Item -Path "$env:USERPROFILE\Downloads\library-app-key.ppk" -Destination "$env:USERPROFILE\.ssh\"
      ```
 
 2. **EC2 인스턴스 시작**
@@ -151,7 +156,19 @@
    - 인스턴스: `library-app-server` 선택 → **"연결"** 클릭
    - ⚠️ **이 IP 주소를 메모하세요!** (예: 3.35.123.456)
 
-4. **SSH 접속 테스트**
+4. **SSH 접속 테스트** (Windows)
+
+   **PuTTY 사용 (권장)**:
+   - PuTTY 실행 → Host Name: `ubuntu@<YOUR-ELASTIC-IP>`
+   - Connection → SSH → Auth → Credentials → Private key: `.ppk` 파일 선택
+   - Open 클릭
+
+   **PowerShell/CMD 사용** (Windows 10+):
+   ```powershell
+   ssh -i %USERPROFILE%\.ssh\library-app-key.pem ubuntu@<YOUR-ELASTIC-IP>
+   ```
+
+   **Git Bash 사용**:
    ```bash
    ssh -i ~/.ssh/library-app-key.pem ubuntu@<YOUR-ELASTIC-IP>
    ```

@@ -96,10 +96,23 @@
 
 ## 사전 준비사항
 
-### 1. 로컬 환경
-- Git 설치
-- SSH 클라이언트 (Mac/Linux: 기본 제공, Windows: Git Bash 또는 PuTTY)
-- 텍스트 에디터 (VS Code 권장)
+### 1. 로컬 환경 (Windows)
+
+**필수 설치**:
+- **Git for Windows**: [다운로드](https://git-scm.com/download/win)
+  - Git Bash 포함 (Unix 명령어 사용 가능)
+  - PowerShell/CMD에서도 git 사용 가능
+- **텍스트 에디터**: [VS Code](https://code.visualstudio.com/) 권장
+
+**SSH 클라이언트** (하나 선택):
+- **PuTTY** (권장): [다운로드](https://www.putty.org/)
+  - Windows 전용 SSH 클라이언트
+  - .ppk 키 파일 형식 사용
+- **Windows OpenSSH**: Windows 10(1809+) 및 Windows 11 기본 포함
+  - 설정 → 앱 → 선택적 기능에서 "OpenSSH 클라이언트" 설치 확인
+  - .pem 키 파일 형식 사용
+- **Git Bash**: Git for Windows 설치 시 자동 포함
+  - Unix 스타일 명령어 사용 가능
 
 ### 2. 계정 및 서비스
 - AWS 계정 (신용카드 필요, 단 프리티어 범위 내 사용 시 무료)
@@ -107,10 +120,17 @@
 - Docker Hub 계정 (선택사항: GitHub Container Registry 사용 가능)
 
 ### 3. 이 저장소 클론
-```bash
+
+**PowerShell 또는 CMD**:
+```powershell
+# Git Bash, PowerShell 또는 CMD에서 실행
 git clone <repository-url>
 cd library-management-system-39
 ```
+
+**또는 파일 탐색기 사용**:
+1. 원하는 폴더에서 우클릭 → "Git Bash Here" 클릭
+2. `git clone <repository-url>` 실행
 
 ---
 
@@ -392,27 +412,43 @@ mysql> exit;
    - **이름**: `library-app-key` 입력
    - **키 페어 유형**: **RSA** 선택
    - **프라이빗 키 파일 형식**:
-     - Mac/Linux 사용자: **".pem"** 선택
-     - Windows (PuTTY) 사용자: **".ppk"** 선택
+     - ✅ **Windows 사용자 (권장)**: **".ppk"** 선택 (PuTTY용)
+     - 또는 **".pem"** 선택 (Git Bash, PowerShell용)
    - **"키 페어 생성"** (Create key pair) 버튼 클릭
    - 🔑 **키 파일이 자동으로 다운로드됩니다. 안전하게 보관하세요!**
 
-3. **키 파일 권한 설정 (Mac/Linux 사용자만)**
-   ```bash
-   # 다운로드 폴더로 이동
-   cd ~/Downloads
+3. **키 파일 저장 (Windows)**
 
-   # 키 파일을 SSH 디렉토리로 이동
-   mkdir -p ~/.ssh
-   mv library-app-key.pem ~/.ssh/
+   **옵션 1: PuTTY 사용자 (.ppk 파일)**
+   ```powershell
+   # 다운로드 폴더에서 안전한 위치로 이동
+   # 파일 탐색기에서 직접 이동하거나 PowerShell 사용:
 
-   # 권한 변경 (필수 - SSH 접속을 위해 반드시 필요)
-   chmod 400 ~/.ssh/library-app-key.pem
+   # SSH 키 저장 폴더 생성
+   New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.ssh"
 
-   # 권한 확인
-   ls -l ~/.ssh/library-app-key.pem
-   # -r-------- 으로 표시되어야 함
+   # 다운로드된 키 파일을 .ssh 폴더로 이동
+   Move-Item -Path "$env:USERPROFILE\Downloads\library-app-key.ppk" -Destination "$env:USERPROFILE\.ssh\library-app-key.ppk"
    ```
+
+   **옵션 2: Git Bash 또는 Windows OpenSSH 사용자 (.pem 파일)**
+   ```bash
+   # Git Bash 또는 PowerShell에서 실행
+
+   # SSH 디렉토리 생성
+   mkdir -p ~/.ssh
+
+   # 키 파일 이동
+   mv ~/Downloads/library-app-key.pem ~/.ssh/
+
+   # 권한 설정 (Git Bash에서만 필요)
+   chmod 400 ~/.ssh/library-app-key.pem
+   ```
+
+   > 💡 **Windows 10/11 사용자 참고**:
+   > - Windows 10(1809 이상) 및 Windows 11에는 OpenSSH가 기본 포함되어 있어 `.pem` 파일 사용 가능
+   > - PuTTY를 사용하려면 [PuTTY 다운로드](https://www.putty.org/) 필요
+   > - Git Bash를 사용하려면 [Git for Windows](https://git-scm.com/download/win) 설치 필요
 
 ### 3.2 EC2 인스턴스 생성
 
@@ -603,38 +639,97 @@ mysql> exit;
 > - ❌ 인스턴스 중지 상태 + Elastic IP 할당만 됨: **시간당 요금 발생**
 > - 💡 사용하지 않는 Elastic IP는 반드시 릴리스(해제)하세요!
 
-### 3.4 EC2 접속 테스트
+### 3.4 EC2 접속 테스트 (Windows)
 
-1. **SSH 접속 (Mac/Linux)**
-   ```bash
-   # Elastic IP로 접속
-   ssh -i ~/.ssh/library-app-key.pem ubuntu@3.35.123.456
+EC2 인스턴스에 SSH로 접속하는 방법은 3가지가 있습니다. 편한 방법을 선택하세요.
 
-   # 처음 접속 시 fingerprint 확인
-   # "yes" 입력
-   ```
+#### 방법 1: PuTTY 사용 (권장 - .ppk 파일)
 
-2. **SSH 접속 (Windows - Git Bash)**
-   ```bash
-   ssh -i ~/Downloads/library-app-key.pem ubuntu@3.35.123.456
-   ```
+1. **PuTTY 다운로드 및 설치**
+   - [PuTTY 다운로드](https://www.putty.org/) 페이지에서 설치 파일 다운로드
+   - 설치 완료 후 PuTTY 실행
 
-3. **접속 확인**
-   ```bash
-   # 환영 메시지 확인
-   ubuntu@ip-172-31-x-x:~$
+2. **PuTTY 설정**
+   - **Session** 탭:
+     - Host Name: `ubuntu@3.35.123.456` (본인의 Elastic IP 입력)
+     - Port: `22`
+     - Connection type: **SSH**
 
-   # 초기화 완료 확인
-   cat init-complete.txt
-   # 출력: EC2 initialization completed
+   - **Connection → SSH → Auth → Credentials** 탭:
+     - "Private key file for authentication" 클릭
+     - `C:\Users\사용자명\.ssh\library-app-key.ppk` 파일 선택
 
-   # Docker 설치 확인
-   docker --version
-   # Docker version 24.x.x
+   - **Session** 탭으로 돌아가서:
+     - Saved Sessions에 `library-app-server` 입력
+     - **Save** 클릭 (다음부터 저장된 세션 사용 가능)
 
-   docker compose version
-   # Docker Compose version v2.x.x
-   ```
+3. **접속**
+   - **Open** 클릭
+   - 보안 경고 창이 뜨면 **"예"** 클릭
+   - 로그인 성공!
+
+#### 방법 2: Windows PowerShell/CMD (Windows 10 1809+ 또는 Windows 11)
+
+Windows 10(1809 이상) 및 Windows 11에는 OpenSSH 클라이언트가 기본 포함되어 있습니다.
+
+```powershell
+# PowerShell 또는 CMD에서 실행
+
+# Elastic IP로 접속 (.pem 파일 사용)
+ssh -i %USERPROFILE%\.ssh\library-app-key.pem ubuntu@3.35.123.456
+
+# 또는 경로 직접 입력
+ssh -i C:\Users\사용자명\.ssh\library-app-key.pem ubuntu@3.35.123.456
+
+# 처음 접속 시 fingerprint 확인 메시지
+# "yes" 입력
+```
+
+> 💡 **OpenSSH가 설치되지 않은 경우**:
+> - Windows 설정 → 앱 → 선택적 기능 → 기능 추가
+> - "OpenSSH 클라이언트" 검색하여 설치
+
+#### 방법 3: Git Bash 사용
+
+Git for Windows를 설치한 경우 Git Bash를 사용할 수 있습니다.
+
+```bash
+# Git Bash에서 실행
+
+# Elastic IP로 접속
+ssh -i ~/.ssh/library-app-key.pem ubuntu@3.35.123.456
+
+# 처음 접속 시 fingerprint 확인
+# "yes" 입력
+```
+
+#### 접속 확인
+
+접속에 성공하면 다음과 같이 확인합니다:
+
+```bash
+# 환영 메시지 확인
+ubuntu@ip-172-31-x-x:~$
+
+# 초기화 완료 확인
+cat init-complete.txt
+# 출력: EC2 initialization completed
+
+# Docker 설치 확인
+docker --version
+# Docker version 24.x.x
+
+docker compose version
+# Docker Compose version v2.x.x
+```
+
+> 📝 **접속 문제 해결**:
+> - PuTTY 사용 시 "Network error: Connection refused"
+>   → EC2 보안 그룹에서 본인 IP가 SSH 허용되어 있는지 확인
+> - "Permission denied (publickey)"
+>   → .ppk 또는 .pem 파일 경로 확인
+> - PowerShell에서 권한 오류
+>   → .pem 파일을 사용하고 파일 경로에 공백이 없는지 확인
 
 ### 3.5 RDS 보안 그룹 업데이트
 
