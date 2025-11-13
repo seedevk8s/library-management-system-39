@@ -156,32 +156,65 @@ cd library-management-system-39
 
 ### 1.3 Billing Alerts 설정 (필수)
 
-1. **Billing 대시보드 접속**
+#### 중요! 비용 초과 방지를 위해 반드시 설정하세요.
+
+1. **결제 대시보드 접속**
    - AWS 콘솔 우측 상단 계정 이름 클릭
-   - "Billing and Cost Management" 선택
+   - **"결제 및 비용 관리"** (Billing and Cost Management) 선택
+   - 또는 검색창에 "결제" 입력
 
 2. **알림 설정 활성화**
-   - 좌측 메뉴 "Billing preferences" 클릭
-   - "Receive Billing Alerts" 체크
+   - 좌측 메뉴에서 **"결제 기본 설정"** (Billing preferences) 클릭
+   - **"결제 알림 수신"** (Receive Billing Alerts) 체크
    - 이메일 주소 입력
-   - "Save preferences"
+   - 하단 **"기본 설정 저장"** (Save preferences) 클릭
 
-3. **CloudWatch 알람 생성**
-   - Services → CloudWatch
-   - 리전을 **"US East (N. Virginia)"** 로 변경 (Billing은 이 리전에서만 가능)
-   - "Alarms" → "Billing" → "Create alarm"
-   - "Select metric" → "Total Estimated Charge" 선택
-   - Threshold: $1 입력 (프리티어 초과 시 알림)
-   - "Create new topic" → SNS 이메일 알림 설정
-   - 이메일 확인 링크 클릭 (받은 편지함 확인)
+3. **CloudWatch 경보 생성**
+   - 좌측 상단 **"서비스"** (Services) 메뉴 클릭
+   - 검색창에 **"CloudWatch"** 입력 후 선택
+   - ⚠️ **중요**: 우측 상단 리전을 **"미국 동부(버지니아 북부)"** (US East N. Virginia)로 변경
+     - 결제 관련 지표는 이 리전에서만 확인 가능합니다
 
-4. **AWS Budget 생성**
-   - Billing 대시보드 → "Budgets"
-   - "Create budget"
-   - "Zero spend budget" 선택
-   - 이름: "Free-Tier-Budget"
-   - 이메일 입력
-   - "Create budget"
+   **경보 생성 과정**:
+   - 좌측 메뉴 **"경보"** (Alarms) → **"결제"** (Billing) 클릭
+   - 또는 **"경보"** → **"모든 경보"** → **"경보 생성"** (Create alarm) 클릭
+   - **"지표 선택"** (Select metric) 클릭
+   - **"결제"** (Billing) → **"총 예상 요금"** (Total Estimated Charge) 선택
+   - 통화: **USD** 선택 → **"지표 선택"** 클릭
+
+   **임계값 설정**:
+   - **"보다 큼"** (Greater than) 선택
+   - 임계값: **1** 입력 (1달러 초과 시 알림)
+   - **"다음"** 클릭
+
+   **알림 설정**:
+   - **"새 주제 생성"** (Create new topic) 선택
+   - 주제 이름: **"Billing-Alert"**
+   - 이메일 엔드포인트: 본인 이메일 입력
+   - **"주제 생성"** (Create topic) 클릭
+   - **"다음"** 클릭
+
+   **경보 이름 설정**:
+   - 경보 이름: **"프리티어-초과-알림"**
+   - **"다음"** → **"경보 생성"** 클릭
+
+   **이메일 구독 확인**:
+   - 이메일로 전송된 **"AWS Notification - Subscription Confirmation"** 확인
+   - **"Confirm subscription"** 링크 클릭 (필수!)
+
+4. **AWS Budget 생성** (추가 안전장치)
+   - 결제 대시보드 좌측 메뉴 → **"예산"** (Budgets) 클릭
+   - **"예산 생성"** (Create budget) 클릭
+   - **"템플릿 사용(간편)"** 선택
+   - **"제로 지출 예산"** (Zero spend budget) 선택
+   - 예산 이름: **"프리티어-무료-예산"**
+   - 이메일 수신자: 본인 이메일 입력
+   - **"예산 생성"** (Create budget) 클릭
+
+> ✅ **설정 완료 확인**
+> - 이메일에서 CloudWatch SNS 구독 확인 완료
+> - 결제 알림 활성화 확인
+> - Budget 생성 확인
 
 ### 1.4 리전 선택
 
