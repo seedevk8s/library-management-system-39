@@ -1,0 +1,215 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1100">
+  <!-- Title -->
+  <text x="700" y="40" font-size="26" font-weight="bold" text-anchor="middle" fill="#2c3e50">
+    Deployment Process - Step by Step Guide
+  </text>
+
+  <!-- Timeline -->
+  <line x1="100" y1="100" x2="100" y2="1050" stroke="#90a4ae" stroke-width="4"/>
+
+  <!-- Phase 1: Preparation -->
+  <g id="phase1">
+    <circle cx="100" cy="120" r="25" fill="#2196f3" stroke="#0d47a1" stroke-width="3"/>
+    <text x="100" y="130" font-size="16" font-weight="bold" text-anchor="middle" fill="#fff">1</text>
+
+    <rect x="160" y="80" width="500" height="180" fill="#e3f2fd" stroke="#2196f3" stroke-width="3" rx="10"/>
+    <text x="410" y="110" font-size="18" font-weight="bold" text-anchor="middle" fill="#0d47a1">
+      Phase 1: AWS Account Setup
+    </text>
+    <text x="410" y="135" font-size="12" text-anchor="middle" fill="#666">
+      Duration: ~30 minutes | One-time setup
+    </text>
+
+    <rect x="180" y="150" width="460" height="100" fill="#fff" stroke="#2196f3" stroke-width="2" rx="5"/>
+    <text x="190" y="170" font-size="12" font-weight="bold" fill="#0d47a1">Tasks:</text>
+    <text x="200" y="190" font-size="11" fill="#333">✓ Create AWS Account (Free Tier eligible)</text>
+    <text x="200" y="208" font-size="11" fill="#333">✓ Setup Billing Alerts (CloudWatch + Budget)</text>
+    <text x="200" y="226" font-size="11" fill="#333">✓ Configure IAM user (optional, for security)</text>
+    <text x="200" y="244" font-size="11" fill="#333">✓ Enable MFA (Multi-Factor Authentication)</text>
+  </g>
+
+  <!-- Phase 2: RDS Setup -->
+  <g id="phase2">
+    <circle cx="100" cy="310" r="25" fill="#1976d2" stroke="#0d47a1" stroke-width="3"/>
+    <text x="100" y="320" font-size="16" font-weight="bold" text-anchor="middle" fill="#fff">2</text>
+
+    <rect x="160" y="270" width="500" height="200" fill="#e1f5fe" stroke="#1976d2" stroke-width="3" rx="10"/>
+    <text x="410" y="300" font-size="18" font-weight="bold" text-anchor="middle" fill="#0d47a1">
+      Phase 2: RDS MySQL Database
+    </text>
+    <text x="410" y="325" font-size="12" text-anchor="middle" fill="#666">
+      Duration: ~10 minutes
+    </text>
+
+    <rect x="180" y="340" width="460" height="120" fill="#fff" stroke="#1976d2" stroke-width="2" rx="5"/>
+    <text x="190" y="360" font-size="12" font-weight="bold" fill="#0d47a1">Tasks:</text>
+    <text x="200" y="380" font-size="11" fill="#333">✓ Create RDS MySQL 8.0 (db.t2.micro)</text>
+    <text x="200" y="398" font-size="11" fill="#333">✓ Set DB name: librarydb, Username: admin</text>
+    <text x="200" y="416" font-size="11" fill="#333">✓ Configure Security Group (allow EC2 access)</text>
+    <text x="200" y="434" font-size="11" fill="#333">✓ Enable automated backups (7 days retention)</text>
+    <text x="200" y="452" font-size="11" fill="#333">✓ Save endpoint URL for later use</text>
+  </g>
+
+  <!-- Phase 3: EC2 Setup -->
+  <g id="phase3">
+    <circle cx="100" cy="520" r="25" fill="#ff9800" stroke="#e65100" stroke-width="3"/>
+    <text x="100" y="530" font-size="16" font-weight="bold" text-anchor="middle" fill="#fff">3</text>
+
+    <rect x="160" y="480" width="500" height="220" fill="#fff3e0" stroke="#ff9800" stroke-width="3" rx="10"/>
+    <text x="410" y="510" font-size="18" font-weight="bold" text-anchor="middle" fill="#e65100">
+      Phase 3: EC2 Instance Creation
+    </text>
+    <text x="410" y="535" font-size="12" text-anchor="middle" fill="#666">
+      Duration: ~15 minutes
+    </text>
+
+    <rect x="180" y="550" width="460" height="140" fill="#fff" stroke="#ff9800" stroke-width="2" rx="5"/>
+    <text x="190" y="570" font-size="12" font-weight="bold" fill="#e65100">Tasks:</text>
+    <text x="200" y="590" font-size="11" fill="#333">✓ Launch EC2 t2.micro (Ubuntu 20.04 LTS)</text>
+    <text x="200" y="608" font-size="11" fill="#333">✓ Create/download SSH key pair (.pem file)</text>
+    <text x="200" y="626" font-size="11" fill="#333">✓ Configure Security Group (SSH:22, HTTP:8081)</text>
+    <text x="200" y="644" font-size="11" fill="#333">✓ Allocate &amp; associate Elastic IP</text>
+    <text x="200" y="662" font-size="11" fill="#333">✓ Increase EBS volume to 30GB</text>
+    <text x="200" y="680" font-size="11" fill="#333">✓ Test SSH connection</text>
+  </g>
+
+  <!-- Phase 4: EC2 Environment Setup -->
+  <g id="phase4">
+    <circle cx="100" cy="750" r="25" fill="#ff6f00" stroke="#e65100" stroke-width="3"/>
+    <text x="100" y="760" font-size="16" font-weight="bold" text-anchor="middle" fill="#fff">4</text>
+
+    <rect x="160" y="710" width="500" height="200" fill="#ffe0b2" stroke="#ff6f00" stroke-width="3" rx="10"/>
+    <text x="410" y="740" font-size="18" font-weight="bold" text-anchor="middle" fill="#e65100">
+      Phase 4: EC2 Software Installation
+    </text>
+    <text x="410" y="765" font-size="12" text-anchor="middle" fill="#666">
+      Duration: ~10 minutes
+    </text>
+
+    <rect x="180" y="780" width="460" height="120" fill="#fff" stroke="#ff6f00" stroke-width="2" rx="5"/>
+    <text x="190" y="800" font-size="12" font-weight="bold" fill="#e65100">Run: ./scripts/setup-ec2.sh</text>
+    <text x="200" y="820" font-size="11" fill="#333">✓ Install Docker &amp; Docker Compose</text>
+    <text x="200" y="838" font-size="11" fill="#333">✓ Install Git, vim, htop, mysql-client</text>
+    <text x="200" y="856" font-size="11" fill="#333">✓ Setup swap memory (1GB for stability)</text>
+    <text x="200" y="874" font-size="11" fill="#333">✓ Configure firewall (ufw)</text>
+    <text x="200" y="892" font-size="11" fill="#333">✓ Create application directory: /home/ubuntu/app</text>
+  </g>
+
+  <!-- Phase 5: Application Deployment -->
+  <g id="phase5">
+    <circle cx="100" cy="960" r="25" fill="#4caf50" stroke="#2e7d32" stroke-width="3"/>
+    <text x="100" y="970" font-size="16" font-weight="bold" text-anchor="middle" fill="#fff">5</text>
+
+    <rect x="160" y="920" width="500" height="140" fill="#e8f5e9" stroke="#4caf50" stroke-width="3" rx="10"/>
+    <text x="410" y="950" font-size="18" font-weight="bold" text-anchor="middle" fill="#2e7d32">
+      Phase 5: First Deployment
+    </text>
+    <text x="410" y="975" font-size="12" text-anchor="middle" fill="#666">
+      Duration: ~5 minutes
+    </text>
+
+    <rect x="180" y="990" width="460" height="60" fill="#fff" stroke="#4caf50" stroke-width="2" rx="5"/>
+    <text x="190" y="1010" font-size="12" font-weight="bold" fill="#2e7d32">Tasks:</text>
+    <text x="200" y="1030" font-size="11" fill="#333">✓ Create .env file with DB credentials</text>
+    <text x="200" y="1045" font-size="11" fill="#333">✓ Run: docker compose -f docker-compose.prod.yml up -d</text>
+  </g>
+
+  <!-- Right side: Detailed steps -->
+  <g id="detailed-steps">
+    <rect x="720" y="80" width="630" height="980" fill="#f5f5f5" stroke="#607d8b" stroke-width="3" rx="10"/>
+    <text x="1035" y="115" font-size="20" font-weight="bold" text-anchor="middle" fill="#37474f">
+      Detailed Configuration Steps
+    </text>
+
+    <!-- Docker Hub Setup -->
+    <g id="dockerhub-setup">
+      <rect x="750" y="140" width="570" height="110" fill="#e3f2fd" stroke="#1976d2" stroke-width="2" rx="8"/>
+      <text x="760" y="165" font-size="14" font-weight="bold" fill="#0d47a1">
+        🐳 Docker Hub Configuration
+      </text>
+      <rect x="770" y="175" width="530" height="65" fill="#fff" stroke="#1976d2" stroke-width="1" rx="4"/>
+      <text x="780" y="195" font-size="11" fill="#333">1. Create Docker Hub account (hub.docker.com)</text>
+      <text x="780" y="212" font-size="11" fill="#333">2. Create repository: your-username/library-app</text>
+      <text x="780" y="229" font-size="11" fill="#333">3. Generate access token (Account Settings → Security)</text>
+    </g>
+
+    <!-- GitHub Secrets -->
+    <g id="github-secrets">
+      <rect x="750" y="270" width="570" height="180" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2" rx="8"/>
+      <text x="760" y="295" font-size="14" font-weight="bold" fill="#6a1b9a">
+        🔐 GitHub Secrets Configuration
+      </text>
+      <text x="760" y="315" font-size="11" fill="#666">
+        Repository → Settings → Secrets and variables → Actions
+      </text>
+      <rect x="770" y="325" width="530" height="115" fill="#fff" stroke="#9c27b0" stroke-width="1" rx="4"/>
+      <text x="780" y="345" font-size="11" fill="#333">DOCKERHUB_USERNAME: your-docker-username</text>
+      <text x="780" y="362" font-size="11" fill="#333">DOCKERHUB_TOKEN: dckr_pat_xxxxx</text>
+      <text x="780" y="379" font-size="11" fill="#333">EC2_HOST: 3.35.xxx.xxx (Elastic IP)</text>
+      <text x="780" y="396" font-size="11" fill="#333">EC2_USERNAME: ubuntu</text>
+      <text x="780" y="413" font-size="11" fill="#333">EC2_SSH_KEY: -----BEGIN RSA PRIVATE KEY----- (full .pem)</text>
+      <text x="780" y="430" font-size="11" fill="#333">DB_URL, DB_USERNAME, DB_PASSWORD: RDS credentials</text>
+    </g>
+
+    <!-- Environment Variables -->
+    <g id="env-vars">
+      <rect x="750" y="470" width="570" height="160" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="8"/>
+      <text x="760" y="495" font-size="14" font-weight="bold" fill="#e65100">
+        📝 EC2 .env File Configuration
+      </text>
+      <text x="760" y="515" font-size="11" fill="#666">
+        File: /home/ubuntu/app/.env
+      </text>
+      <rect x="770" y="525" width="530" height="95" fill="#fff" stroke="#ff9800" stroke-width="1" rx="4"/>
+      <text x="780" y="545" font-family="monospace" font-size="10" fill="#333">SPRING_PROFILES_ACTIVE=prod</text>
+      <text x="780" y="562" font-family="monospace" font-size="10" fill="#333">DB_URL=jdbc:mysql://library-db.xxx.rds.amazonaws.com:3306/librarydb</text>
+      <text x="780" y="579" font-family="monospace" font-size="10" fill="#333">DB_USERNAME=admin</text>
+      <text x="780" y="596" font-family="monospace" font-size="10" fill="#333">DB_PASSWORD=your-secure-password</text>
+      <text x="780" y="613" font-family="monospace" font-size="10" fill="#333">FILE_UPLOAD_DIR=/app/uploads</text>
+    </g>
+
+    <!-- Health Check -->
+    <g id="health-check">
+      <rect x="750" y="650" width="570" height="120" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="8"/>
+      <text x="760" y="675" font-size="14" font-weight="bold" fill="#2e7d32">
+        ✅ Verification &amp; Testing
+      </text>
+      <rect x="770" y="685" width="530" height="75" fill="#fff" stroke="#4caf50" stroke-width="1" rx="4"/>
+      <text x="780" y="705" font-size="11" fill="#333">1. curl http://localhost:8081/actuator/health</text>
+      <text x="780" y="722" font-size="11" fill="#333">2. Access: http://&lt;ELASTIC-IP&gt;:8081</text>
+      <text x="780" y="739" font-size="11" fill="#333">3. Check logs: docker compose logs -f app</text>
+      <text x="780" y="756" font-size="11" fill="#333">4. Test database connection from application</text>
+    </g>
+
+    <!-- CI/CD Workflow -->
+    <g id="cicd-workflow">
+      <rect x="750" y="790" width="570" height="130" fill="#e1f5fe" stroke="#0277bd" stroke-width="2" rx="8"/>
+      <text x="760" y="815" font-size="14" font-weight="bold" fill="#01579b">
+        🔄 CI/CD Workflow Activation
+      </text>
+      <rect x="770" y="825" width="530" height="85" fill="#fff" stroke="#0277bd" stroke-width="1" rx="4"/>
+      <text x="780" y="845" font-size="11" fill="#333">1. Workflow file already exists: .github/workflows/deploy.yml</text>
+      <text x="780" y="862" font-size="11" fill="#333">2. Configure all GitHub Secrets (see above)</text>
+      <text x="780" y="879" font-size="11" fill="#333">3. Test: git push origin main</text>
+      <text x="780" y="896" font-size="11" fill="#333">4. Monitor: GitHub → Actions tab</text>
+    </g>
+
+    <!-- Cost Monitoring -->
+    <g id="cost-monitoring">
+      <rect x="750" y="940" width="570" height="110" fill="#ffebee" stroke="#d32f2f" stroke-width="2" rx="8"/>
+      <text x="760" y="965" font-size="14" font-weight="bold" fill="#c62828">
+        💰 Cost Monitoring (IMPORTANT!)
+      </text>
+      <rect x="770" y="975" width="530" height="65" fill="#fff" stroke="#d32f2f" stroke-width="1" rx="4"/>
+      <text x="780" y="995" font-size="11" fill="#333">1. Setup CloudWatch Billing Alarm ($1 threshold)</text>
+      <text x="780" y="1012" font-size="11" fill="#333">2. Create AWS Budget ($0 budget with alerts)</text>
+      <text x="780" y="1029" font-size="11" fill="#333">3. Check Free Tier Usage Dashboard daily</text>
+    </g>
+  </g>
+
+  <!-- Total Time -->
+  <rect x="50" y="1070" width="1300" height="25" fill="#eceff1" stroke="#607d8b" stroke-width="2" rx="3"/>
+  <text x="700" y="1088" font-size="13" font-weight="bold" text-anchor="middle" fill="#263238">
+    Total Setup Time: ~1.5 hours (First time) | Future deployments: Automatic (&lt;10 minutes)
+  </text>
+</svg>
