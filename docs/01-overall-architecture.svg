@@ -1,0 +1,197 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <!-- Title -->
+  <text x="600" y="30" font-size="24" font-weight="bold" text-anchor="middle" fill="#2c3e50">
+    Library Management System - Overall Architecture
+  </text>
+
+  <!-- Development Environment -->
+  <g id="dev-env">
+    <rect x="50" y="80" width="300" height="250" fill="#e8f5e9" stroke="#4caf50" stroke-width="3" rx="10"/>
+    <text x="200" y="110" font-size="18" font-weight="bold" text-anchor="middle" fill="#2e7d32">
+      Development Environment
+    </text>
+
+    <!-- Developer -->
+    <circle cx="120" cy="170" r="30" fill="#81c784"/>
+    <text x="120" y="175" font-size="12" text-anchor="middle" fill="#fff">DEV</text>
+    <text x="200" y="175" font-size="14" fill="#1b5e20">Developer</text>
+
+    <!-- Local Docker -->
+    <rect x="80" y="220" width="220" height="90" fill="#fff" stroke="#4caf50" stroke-width="2" rx="5"/>
+    <text x="190" y="245" font-size="14" font-weight="bold" text-anchor="middle" fill="#2e7d32">
+      Docker Compose (Local)
+    </text>
+    <rect x="100" y="260" width="80" height="35" fill="#1976d2" stroke="#0d47a1" stroke-width="1" rx="3"/>
+    <text x="140" y="282" font-size="11" text-anchor="middle" fill="#fff">Spring Boot</text>
+    <rect x="200" y="260" width="80" height="35" fill="#ff6f00" stroke="#e65100" stroke-width="1" rx="3"/>
+    <text x="240" y="282" font-size="11" text-anchor="middle" fill="#fff">MySQL 8.0</text>
+  </g>
+
+  <!-- GitHub -->
+  <g id="github">
+    <rect x="450" y="80" width="300" height="250" fill="#f5f5f5" stroke="#333" stroke-width="3" rx="10"/>
+    <text x="600" y="110" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">
+      GitHub Repository
+    </text>
+
+    <!-- Git Push -->
+    <path d="M 350 200 L 450 200" stroke="#4caf50" stroke-width="3" fill="none" marker-end="url(#arrowgreen)"/>
+    <text x="400" y="190" font-size="12" fill="#2e7d32">git push</text>
+
+    <!-- Code -->
+    <rect x="480" y="140" width="240" height="40" fill="#fff" stroke="#666" stroke-width="2" rx="5"/>
+    <text x="600" y="165" font-size="13" text-anchor="middle" fill="#333">Source Code (main branch)</text>
+
+    <!-- GitHub Actions -->
+    <rect x="480" y="200" width="240" height="110" fill="#2088ff" stroke="#0366d6" stroke-width="2" rx="5"/>
+    <text x="600" y="225" font-size="14" font-weight="bold" text-anchor="middle" fill="#fff">
+      GitHub Actions
+    </text>
+    <text x="490" y="250" font-size="11" fill="#fff">1. Build &amp; Test (Gradle)</text>
+    <text x="490" y="270" font-size="11" fill="#fff">2. Docker Image Build</text>
+    <text x="490" y="290" font-size="11" fill="#fff">3. Push to Docker Hub</text>
+    <text x="490" y="310" font-size="11" fill="#fff">4. Deploy to EC2</text>
+  </g>
+
+  <!-- Docker Hub -->
+  <g id="docker-hub">
+    <rect x="850" y="80" width="300" height="250" fill="#e3f2fd" stroke="#1976d2" stroke-width="3" rx="10"/>
+    <text x="1000" y="110" font-size="18" font-weight="bold" text-anchor="middle" fill="#0d47a1">
+      Docker Hub
+    </text>
+
+    <!-- Push to Docker Hub -->
+    <path d="M 750 255 L 850 255" stroke="#2088ff" stroke-width="3" fill="none" marker-end="url(#arrowblue)"/>
+    <text x="800" y="245" font-size="12" fill="#0366d6">push</text>
+
+    <!-- Docker Images -->
+    <rect x="880" y="150" width="240" height="160" fill="#fff" stroke="#1976d2" stroke-width="2" rx="5"/>
+    <text x="1000" y="175" font-size="13" text-anchor="middle" fill="#0d47a1">Docker Images</text>
+
+    <rect x="900" y="190" width="200" height="30" fill="#1976d2" stroke="#0d47a1" stroke-width="1" rx="3"/>
+    <text x="1000" y="210" font-size="11" text-anchor="middle" fill="#fff">library-app:latest</text>
+
+    <rect x="900" y="230" width="200" height="30" fill="#1976d2" stroke="#0d47a1" stroke-width="1" rx="3"/>
+    <text x="1000" y="250" font-size="11" text-anchor="middle" fill="#fff">library-app:git-sha</text>
+
+    <rect x="900" y="270" width="200" height="30" fill="#90caf9" stroke="#0d47a1" stroke-width="1" rx="3"/>
+    <text x="1000" y="290" font-size="11" text-anchor="middle" fill="#0d47a1">Previous versions...</text>
+  </g>
+
+  <!-- AWS Cloud -->
+  <g id="aws-cloud">
+    <rect x="50" y="400" width="1100" height="350" fill="#fff4e6" stroke="#ff9800" stroke-width="4" rx="15"/>
+    <text x="600" y="435" font-size="20" font-weight="bold" text-anchor="middle" fill="#e65100">
+      AWS Cloud (Free Tier)
+    </text>
+
+    <!-- EC2 -->
+    <g id="ec2">
+      <rect x="100" y="460" width="320" height="260" fill="#fff" stroke="#f57c00" stroke-width="3" rx="10"/>
+      <text x="260" y="490" font-size="16" font-weight="bold" text-anchor="middle" fill="#e65100">
+        EC2 Instance (t2.micro)
+      </text>
+
+      <!-- Elastic IP -->
+      <rect x="120" y="505" width="280" height="30" fill="#4caf50" stroke="#2e7d32" stroke-width="2" rx="5"/>
+      <text x="260" y="525" font-size="12" text-anchor="middle" fill="#fff">Elastic IP: 3.35.xxx.xxx</text>
+
+      <!-- Docker Container -->
+      <rect x="130" y="550" width="260" height="90" fill="#1976d2" stroke="#0d47a1" stroke-width="2" rx="5"/>
+      <text x="260" y="575" font-size="13" font-weight="bold" text-anchor="middle" fill="#fff">
+        Docker Container
+      </text>
+      <text x="260" y="595" font-size="12" text-anchor="middle" fill="#fff">Spring Boot App</text>
+      <text x="260" y="615" font-size="11" text-anchor="middle" fill="#e3f2fd">Port: 8081</text>
+      <text x="260" y="630" font-size="11" text-anchor="middle" fill="#e3f2fd">Profile: prod</text>
+
+      <!-- Uploads Volume -->
+      <rect x="130" y="655" width="120" height="35" fill="#ffb74d" stroke="#f57c00" stroke-width="1" rx="3"/>
+      <text x="190" y="677" font-size="10" text-anchor="middle" fill="#fff">Uploads Volume</text>
+
+      <!-- Logs Volume -->
+      <rect x="270" y="655" width="120" height="35" fill="#ffb74d" stroke="#f57c00" stroke-width="1" rx="3"/>
+      <text x="330" y="677" font-size="10" text-anchor="middle" fill="#fff">Logs Volume</text>
+    </g>
+
+    <!-- RDS -->
+    <g id="rds">
+      <rect x="500" y="460" width="320" height="260" fill="#fff" stroke="#1976d2" stroke-width="3" rx="10"/>
+      <text x="660" y="490" font-size="16" font-weight="bold" text-anchor="middle" fill="#0d47a1">
+        RDS MySQL (db.t2.micro)
+      </text>
+
+      <!-- Database Info -->
+      <rect x="520" y="510" width="280" height="190" fill="#e3f2fd" stroke="#1976d2" stroke-width="2" rx="5"/>
+      <text x="660" y="540" font-size="13" font-weight="bold" text-anchor="middle" fill="#0d47a1">
+        MySQL 8.0
+      </text>
+      <text x="530" y="570" font-size="11" fill="#1565c0">Engine: MySQL 8.0.35</text>
+      <text x="530" y="590" font-size="11" fill="#1565c0">Storage: 20GB (Free Tier)</text>
+      <text x="530" y="610" font-size="11" fill="#1565c0">Endpoint: library-db.xxx...</text>
+      <text x="530" y="630" font-size="11" fill="#1565c0">Port: 3306</text>
+      <text x="530" y="650" font-size="11" fill="#1565c0">Database: librarydb</text>
+      <text x="530" y="670" font-size="11" fill="#1565c0">Multi-AZ: No (Free Tier)</text>
+      <text x="530" y="690" font-size="11" fill="#1565c0">Backup: 7 days retention</text>
+    </g>
+
+    <!-- Security Groups -->
+    <g id="security">
+      <rect x="880" y="460" width="240" height="260" fill="#fff" stroke="#9c27b0" stroke-width="3" rx="10"/>
+      <text x="1000" y="490" font-size="16" font-weight="bold" text-anchor="middle" fill="#6a1b9a">
+        Security Groups
+      </text>
+
+      <rect x="900" y="510" width="200" height="80" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2" rx="5"/>
+      <text x="1000" y="530" font-size="12" font-weight="bold" text-anchor="middle" fill="#6a1b9a">EC2 SG</text>
+      <text x="910" y="550" font-size="10" fill="#6a1b9a">SSH: 22 (My IP)</text>
+      <text x="910" y="567" font-size="10" fill="#6a1b9a">HTTP: 8081 (0.0.0.0/0)</text>
+      <text x="910" y="584" font-size="10" fill="#6a1b9a">MySQL: 3306 (RDS SG)</text>
+
+      <rect x="900" y="610" width="200" height="80" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2" rx="5"/>
+      <text x="1000" y="630" font-size="12" font-weight="bold" text-anchor="middle" fill="#6a1b9a">RDS SG</text>
+      <text x="910" y="650" font-size="10" fill="#6a1b9a">MySQL: 3306</text>
+      <text x="910" y="667" font-size="10" fill="#6a1b9a">Source: EC2 SG</text>
+      <text x="910" y="684" font-size="10" fill="#6a1b9a">(Private access only)</text>
+    </g>
+
+    <!-- Connection between EC2 and RDS -->
+    <path d="M 420 590 L 500 590" stroke="#1976d2" stroke-width="4" fill="none" marker-end="url(#arrowblue2)"/>
+    <text x="460" y="580" font-size="11" fill="#0d47a1">JDBC</text>
+    <text x="460" y="595" font-size="9" fill="#666">port 3306</text>
+  </g>
+
+  <!-- Deploy arrow from Docker Hub to EC2 -->
+  <path d="M 1000 330 L 1000 380 L 260 380 L 260 460" stroke="#ff6f00" stroke-width="4" fill="none" marker-end="url(#arroworange)" stroke-dasharray="10,5"/>
+  <text x="900" y="370" font-size="12" fill="#e65100">docker pull &amp; run</text>
+
+  <!-- Users -->
+  <g id="users">
+    <circle cx="600" y="760" r="15" fill="#4caf50"/>
+    <text x="600" y="765" font-size="10" text-anchor="middle" fill="#fff">👤</text>
+    <text x="600" y="785" font-size="12" text-anchor="middle" fill="#2e7d32">End Users</text>
+  </g>
+
+  <!-- User to EC2 connection -->
+  <path d="M 600 740 L 600 700 L 260 700 L 260 720" stroke="#4caf50" stroke-width="3" fill="none" marker-end="url(#arrowgreen2)"/>
+  <text x="450" y="690" font-size="11" fill="#2e7d32">HTTP :8081</text>
+
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrowgreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#4caf50"/>
+    </marker>
+    <marker id="arrowblue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#2088ff"/>
+    </marker>
+    <marker id="arrowblue2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1976d2"/>
+    </marker>
+    <marker id="arroworange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#ff6f00"/>
+    </marker>
+    <marker id="arrowgreen2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#4caf50"/>
+    </marker>
+  </defs>
+</svg>
